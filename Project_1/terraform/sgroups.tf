@@ -95,3 +95,56 @@ resource "aws_security_group" "rabbitmq_sg" {
   }
 }
 
+# RDS security group
+resource "aws_security_group" "rds_sg" {
+  name        = "rds-security-group"
+  description = "Security group for RDS for MySQL"
+  vpc_id      = "module.vpc.vpc_id"
+
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow traffic to RDS"
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all outbound traffic"
+  }
+
+  tags = {
+    Name = "rds-security-group"
+  }
+}
+
+# App security group
+resource "aws_security_group" "app_sg" {
+  name        = "app-security-group"
+  description = "Security group for app"
+  vpc_id      = "module.vpc.vpc_id"
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow traffic to application servers"
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all outbound traffic"
+  }
+
+  tags = {
+    Name = "app-security-group"
+  }
+}
