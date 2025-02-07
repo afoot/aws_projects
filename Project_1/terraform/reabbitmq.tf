@@ -6,7 +6,11 @@ resource "aws_mq_broker" "rabbitmq" {
   instance_type       = "mq.t3.micro"
   publicly_accessible = false
   security_groups     = [aws_security_group.rabbitmq_sg.id]
-  subnet_ids          = [module.vpc.private_subnets[0], module.vpc.private_subnets[1], module.vpc.private_subnets[2]]
+  subnet_ids          = [
+    module.vpc.private_subnets[0], 
+    module.vpc.private_subnets[1], 
+    module.vpc.private_subnets[2]
+]
 
   user {
     username = ""
