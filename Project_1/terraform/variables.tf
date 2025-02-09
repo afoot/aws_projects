@@ -46,4 +46,11 @@ variable "region" {
     default = "172.31.96.0/20"
   }
 
+  variable "ami" {
+    default = "ami-0e1bed4f06a3b463d"
+  }
+
+  variable "instance_type" {
+    default = "t2.micro"
+  }
   
