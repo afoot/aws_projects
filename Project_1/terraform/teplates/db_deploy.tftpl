@@ -1,0 +1,3 @@
+sudo apt update -y
+sudo apt install git mysql-client-core-8.0 -y
+mysql -h ${rds-endpoint} -u ${dbuser} --password=${dbpass} accounts --ssl-mode=DISABLED < db_backup.sql
