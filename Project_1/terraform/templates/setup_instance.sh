@@ -7,20 +7,18 @@ sudo apt update -y
 sudo apt install -y default-jdk
 
 # Create Tomcat user and group
-sudo groupadd tomcat
-sudo useradd -s /bin/false -g tomcat tomcat
+sudo useradd -m -d /opt/tomcat -U -s /bin/false tomcat
 
 # Download Tomcat (replace with the desired version)
-TOMCAT_VERSION="10.1.15"  # Example version
-wget "https://downloads.apache.org/tomcat/tomcat-${TOMCAT_VERSION}/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz" -O tomcat.tar.gz
+TOMCAT_VERSION="10.1.34"  # Example version
+wget "https://dlcdn.apache.org/tomcat/tomcat-10/v10.1.34/bin/apache-tomcat-10.1.34.tar.gz" -O tomcat.tar.gz
 
 # Extract Tomcat to /opt/
-sudo tar -xzf tomcat.tar.gz -C /opt/
-sudo ln -s /opt/apache-tomcat-${TOMCAT_VERSION} /opt/tomcat
+sudo tar -xzf tomcat.tar.gz -C /opt/tomcat --strip-components=1
 
 # Set file permissions
-sudo chown -R tomcat:tomcat /opt/tomcat
-sudo chmod +x /opt/tomcat/bin/*.sh
+sudo chown -R tomcat:tomcat /opt/tomcat/
+sudo chmod -R u+x /opt/tomcat/bin
 
 # Configure Tomcat (tomcat-users.xml)
 sudo nano /opt/tomcat/conf/tomcat-users.xml  # Add user with manager-gui role
@@ -38,8 +36,8 @@ After=network.target
 User=tomcat
 Group=tomcat
 Type=forking
-PIDFile=/opt/tomcat/temp/catalina.pid
-Environment=JAVA_HOME=$(update-alternatives --query java | grep "link" | awk '{print $2}') # Dynamically find JAVA_HOME
+Environment="CATALINA_PID=/opt/tomcat/temp/tomcat.pid"
+Environment="JAVA_HOME=/usr/lib/jvm/java-1.11.0-openjdk-amd64"
 ExecStart=/opt/tomcat/bin/catalina.sh start
 ExecStop=/opt/tomcat/bin/catalina.sh stop
 
@@ -52,5 +50,4 @@ sudo systemctl daemon-reload
 sudo systemctl enable tomcat
 sudo systemctl start tomcat
 
-echo "Tomcat installation complete. Access Tomcat at http://your_server_ip:8080"
-echo "Remember to configure a firewall and HTTPS!"
+sudo ufw allow 8080
