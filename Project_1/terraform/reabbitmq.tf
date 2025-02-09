@@ -1,11 +1,11 @@
 
-resource "aws_mq_broker" "rabbitmq" {
-  broker_name         = "rabbitmq-cluster"
-  engine_type         = "RabbitMQ"
-  engine_version      = "3.13"
-  instance_type       = "mq.t3.micro"
+resource "aws_mq_broker" "activemq" {
+  broker_name         = "activemq-cluster"
+  engine_type         = "ActiveMQ"
+  engine_version      = "5.17.6"
+  host_instance_type  = "mq.t3.micro"
   publicly_accessible = false
-  security_groups     = [aws_security_group.rabbitmq_sg.id]
+  security_groups     = [aws_security_group.activemq_sg.id]
   subnet_ids          = [
     module.vpc.private_subnets[0], 
     module.vpc.private_subnets[1], 
@@ -13,11 +13,11 @@ resource "aws_mq_broker" "rabbitmq" {
 ]
 
   user {
-    username = ""
-    password = ""
+    username = var.rmquser
+    password = var.rmqpass
   }
 
   tags   = {
-    Name = "rabbitmq-cluster"
+    Name = "activemq-cluster"
   }
 }

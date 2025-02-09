@@ -61,9 +61,9 @@ resource "aws_security_group" "memcached_sg" {
 }
 
 # Rabbit MQ security group
-resource "aws_security_group" "rabbitmq_sg" {
-  name        = "rabbitmq-security-group"
-  description = "Security group for RabbitMQ"
+resource "aws_security_group" "activemq_sg_sg" {
+  name        = "ractivemq-security-group"
+  description = "Security group for ActiveMQ"
   vpc_id      = "module.vpc.vpc_id"
 
   ingress {
@@ -71,7 +71,7 @@ resource "aws_security_group" "rabbitmq_sg" {
     to_port     = 5671
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-    description = "Allow RabbitMQ traffic"
+    description = "Allow ActiveMQ traffic"
   }
 
   ingress {
@@ -79,7 +79,7 @@ resource "aws_security_group" "rabbitmq_sg" {
     to_port     = 15672
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-    description = "Allow RabbitMQ management traffic"
+    description = "Allow ActiveMQ management traffic"
   }
 
   egress {
