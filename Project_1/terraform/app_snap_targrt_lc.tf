@@ -3,6 +3,7 @@
 resource "aws_instance" "app" {
   ami           = var.ami 
   instance_type = var.instance_type
+  key_name = "aws_projects"
   user_data     = file("setup_instance.sh") # Script to configure the instance
 
   provisioner "local-exec" {
