@@ -54,3 +54,11 @@ variable "region" {
     default = "t2.micro"
   }
   
+  variable "rmquser" {
+    description = "rmq user"
+  }
+
+  variable "rmqpass" {
+    description = "rmq password"
+  }
+  
