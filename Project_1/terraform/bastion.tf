@@ -1,4 +1,4 @@
-resource "aws_instance" "vprofile-bastion" {
+resource "aws_instance" "bastion" {
   ami                    = var.ami
   instance_type          = "t2.micro"
   key_name               = var.key_name
@@ -25,9 +25,9 @@ resource "aws_instance" "vprofile-bastion" {
 
   connection {
     user        = var.user
-    private_key = file(var.private_key)
+    private_key = local.private_key
     host        = self.public_ip
   }
 
-  depends_on = [aws_db_instance.rds]
+  depends_on = [aws_db_instance.mysql]
 }

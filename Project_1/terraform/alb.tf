@@ -13,8 +13,8 @@ resource "aws_lb" "alb" {
   name               = "alb-aws"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.lb_sg.id]
-  subnets            = [for subnet in module.vpc.public_subnets : subnet.id]
+  security_groups    = [aws_security_group.alb_sg.id]
+  subnets            = [var.public_sub1, var.public_sub2, var.public_sub3]
 
   enable_deletion_protection = true
 
@@ -46,7 +46,7 @@ resource "aws_lb_target_group" "app_tg" {
   name     = "my-app-tg"
   port     = 8080 # Your application port
   protocol = "HTTP"
-  vpc_id   = aws_vpc.main.id
+  vpc_id   = module.vpc.vpc_id
 
   health_check {
     path               = "/" # Your app's health check path

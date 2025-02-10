@@ -74,10 +74,6 @@ variable "region" {
     description = "user for bastion host"
   }
 
-  variable "private_key" {
-    description = "private key to connect bastion host"
-  }
-
   variable "dbuser" {
     description = "username word for db"
   }
@@ -93,3 +89,13 @@ variable "region" {
   variable "my_ip" {
     description = "your external ip to connect bastion host"
   }
+
+  variable "private_key_path" {
+    description = "Path to the private key file"
+  type        = string
+}
+
+locals {
+  private_key = file(var.private_key_path)
+}
+

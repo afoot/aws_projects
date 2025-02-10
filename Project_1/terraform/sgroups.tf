@@ -61,7 +61,7 @@ resource "aws_security_group" "memcached_sg" {
 }
 
 # Rabbit MQ security group
-resource "aws_security_group" "activemq_sg_sg" {
+resource "aws_security_group" "activemq_sg" {
   name        = "ractivemq-security-group"
   description = "Security group for ActiveMQ"
   vpc_id      = "module.vpc.vpc_id"
