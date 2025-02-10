@@ -2,7 +2,7 @@
 resource "aws_security_group" "alb_sg" {
   name        = "alb-security-group"
   description = "Security group for ALB"
-  vpc_id      = "module.vpc.vpc_id"
+  vpc_id      = module.vpc.vpc_id
 
   ingress {
     from_port   = 80
@@ -37,7 +37,7 @@ resource "aws_security_group" "alb_sg" {
 resource "aws_security_group" "memcached_sg" {
   name        = "memcached-security-group"
   description = "Security group for Memcached"
-  vpc_id      = "module.vpc.vpc_id"
+  vpc_id      = module.vpc.vpc_id
 
   ingress {
     from_port   = 11211
@@ -64,7 +64,7 @@ resource "aws_security_group" "memcached_sg" {
 resource "aws_security_group" "activemq_sg" {
   name        = "ractivemq-security-group"
   description = "Security group for ActiveMQ"
-  vpc_id      = "module.vpc.vpc_id"
+  vpc_id      = module.vpc.vpc_id
 
   ingress {
     from_port   = 5671
@@ -99,7 +99,7 @@ resource "aws_security_group" "activemq_sg" {
 resource "aws_security_group" "rds_sg" {
   name        = "rds-security-group"
   description = "Security group for RDS for MySQL"
-  vpc_id      = "module.vpc.vpc_id"
+  vpc_id      = module.vpc.vpc_id
 
   ingress {
     from_port   = 3306
@@ -126,7 +126,7 @@ resource "aws_security_group" "rds_sg" {
 resource "aws_security_group" "app_sg" {
   name        = "app-security-group"
   description = "Security group for app"
-  vpc_id      = "module.vpc.vpc_id"
+  vpc_id      = module.vpc.vpc_id
 
   ingress {
     from_port   = 8080

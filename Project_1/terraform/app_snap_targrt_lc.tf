@@ -5,7 +5,8 @@ resource "aws_instance" "app" {
   instance_type = var.instance_type
   key_name      = "aws_projects"
   user_data     = file("templates/setup_instance.sh") # Script to configure the instance
-
+  vpc_security_group_ids = [aws_security_group.app_sg.id] 
+  
   provisioner "local-exec" {
     command = "aws ec2 wait instance-status-ok --instance-ids ${self.id}"
   }
@@ -23,10 +24,12 @@ resource "aws_ami_from_instance" "ami" {
 
 # 3. Launch Configuration (using the AMI)
 
-resource "aws_launch_configuration" "app_lc" {
-  name_prefix   = "lc-"
+resource "aws_launch_template" "app_lt" {
+  name_prefix   = "lt-"
   image_id      = aws_ami_from_instance.ami.id
   instance_type = var.instance_type
+  key_name = "aws_projects"
+  vpc_security_group_ids = [aws_security_group.app_sg.id]
 }
 
 # 4. Auto Scaling Group (using the Launch Configuration)
