@@ -43,3 +43,8 @@ resource "aws_autoscaling_group" "app_asg" {
 }
 
 # 5. Target Group and Attachment (same as before)
+
+resource "aws_autoscaling_attachment" "asg_tg_attachment" {
+  autoscaling_group_name    = aws_autoscaling_group.app_lc.name
+  lb_target_group_arn       = aws_lb_target_group.app_tg.arn
+}
