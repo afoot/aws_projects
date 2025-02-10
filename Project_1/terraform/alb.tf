@@ -1,3 +1,12 @@
+# Deploy S3 bucket for ALB logs
+
+resource "aws_s3_bucket" "alb_logs" {
+  bucket_prefix = "alb-logs-" # Prefix for the bucket name
+  tags = {
+    Name = "alb-logs"
+    Environment = "Dev"
+  }
+}
 
 # Setup ALB
 resource "aws_lb" "alb" {
@@ -5,12 +14,12 @@ resource "aws_lb" "alb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.lb_sg.id]
-  subnets            = [for subnet in aws_subnet.public : subnet.id]
+  subnets            = [for subnet in module.vpc.public_subnets : subnet.id]
 
   enable_deletion_protection = true
 
   access_logs {
-    bucket  = aws_s3_bucket.lb_logs.id
+    bucket  = aws_s3_bucket.alb_logs.id
     prefix  = "alb_aws"
     enabled = true
   }
@@ -22,7 +31,7 @@ resource "aws_lb" "alb" {
 
 # Setup listener
 resource "aws_lb_listener" "http" {
-  load_balancer_arn = aws_lb.app_lb.arn
+  load_balancer_arn = aws_lb.alb.arn
   port              = 80
   protocol          = "HTTP"
 

@@ -3,7 +3,7 @@
 resource "aws_instance" "app" {
   ami           = var.ami 
   instance_type = var.instance_type
-  key_name = "aws_projects"
+  key_name      = "aws_projects"
   user_data     = file("setup_instance.sh") # Script to configure the instance
 
   provisioner "local-exec" {
@@ -37,15 +37,13 @@ resource "aws_autoscaling_group" "app_asg" {
   min_size             = 2
   max_size             = 4
   desired_capacity     = 2
-  vpc_zone_identifier  = [aws_subnet.public_a.id, aws_subnet.public_b.id] # Subnets for your instances
-  # ... other ASG settings (health checks, tags, etc.)
-
+  vpc_zone_identifier  = [module.vpc.public_subnets[0], module.vpc.public_subnets[1], module.vpc.public_subnets[2]] # Subnets for your instances
   health_check_type    = "ELB" # Or "EC2" if not using a load balancer
 }
 
 # 5. Target Group and Attachment (same as before)
 
 resource "aws_autoscaling_attachment" "asg_tg_attachment" {
-  autoscaling_group_name    = aws_autoscaling_group.app_lc.name
+  autoscaling_group_name    = aws_autoscaling_group.app_asg.name
   lb_target_group_arn       = aws_lb_target_group.app_tg.arn
 }
