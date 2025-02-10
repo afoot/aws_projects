@@ -7,7 +7,7 @@ variable "vpc_name" {
 }
 
 variable "vpc_cidr" {
-  default = "172.31.0.0/16"
+  default = "172.21.0.0/16"
 }
 
 variable "az1" {
@@ -23,27 +23,27 @@ variable "az3" {
 }
 
 variable "public_sub1" {
-  default = "172.31.0.0/20"
+  default = "172.21.1.0/24"
 }
 
 variable "public_sub2" {
-  default = "172.31.16.0/20"
+  default = "172.21.2.0/24"
 }
 
 variable "public_sub3" {
-  default = "172.31.32.0/20"
+  default = "172.21.3.0/24"
 }
 
 variable "private_sub1" {
-  default = "172.31.64.0/20"
+  default = "172.21.4.0/24"
 }
 
 variable "private_sub2" {
-  default = "172.31.80.0/20"
+  default = "172.21.5.0/24"
 }
 
 variable "private_sub3" {
-  default = "172.31.96.0/20"
+  default = "172.21.6.0/24"
 }
 
 variable "ami" {

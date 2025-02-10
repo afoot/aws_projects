@@ -1,12 +1,12 @@
 # 1. Launch an Initial Instance (for configuration)
 
 resource "aws_instance" "app" {
-  ami           = var.ami
-  instance_type = var.instance_type
-  key_name      = "aws_projects"
-  user_data     = file("templates/setup_instance.sh") # Script to configure the instance
-  vpc_security_group_ids = [aws_security_group.app_sg.id] 
-  
+  ami                    = var.ami
+  instance_type          = var.instance_type
+  key_name               = "aws_projects"
+  user_data              = file("templates/setup_instance.sh") # Script to configure the instance
+  vpc_security_group_ids = [aws_security_group.app_sg.id]
+
   provisioner "local-exec" {
     command = "aws ec2 wait instance-status-ok --instance-ids ${self.id}"
   }
@@ -25,23 +25,32 @@ resource "aws_ami_from_instance" "ami" {
 # 3. Launch Configuration (using the AMI)
 
 resource "aws_launch_template" "app_lt" {
-  name_prefix   = "lt-"
-  image_id      = aws_ami_from_instance.ami.id
-  instance_type = var.instance_type
-  key_name = "aws_projects"
+  name_prefix            = "lt-"
+  image_id               = aws_ami_from_instance.ami.id
+  instance_type          = var.instance_type
+  key_name               = "aws_projects"
   vpc_security_group_ids = [aws_security_group.app_sg.id]
 }
 
 # 4. Auto Scaling Group (using the Launch Configuration)
 
 resource "aws_autoscaling_group" "app_asg" {
-  name                 = "app-asg"
-  launch_configuration = aws_launch_configuration.app_lc.name
-  min_size             = 2
-  max_size             = 4
-  desired_capacity     = 2
-  vpc_zone_identifier  = [module.vpc.public_subnets[0], module.vpc.public_subnets[1], module.vpc.public_subnets[2]] # Subnets for your instances
-  health_check_type    = "ELB"                                                                                      # Or "EC2" if not using a load balancer
+  name                = "app-asg"
+  min_size            = 2
+  max_size            = 3
+  desired_capacity    = 2
+  vpc_zone_identifier = [module.vpc.public_subnets[0], module.vpc.public_subnets[1], module.vpc.public_subnets[2]] # Subnets for your instances
+  health_check_type   = "ELB"
+
+  launch_template {
+    id      = aws_launch_template.app_lt.id
+    version = "$Latest"
+  }
+  tag {
+    key                 = "Name"
+    value               = "app-asg"
+    propagate_at_launch = true
+  }
 }
 
 # 5. Target Group and Attachment (same as before)
