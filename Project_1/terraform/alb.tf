@@ -3,7 +3,7 @@
 resource "aws_s3_bucket" "alb_logs" {
   bucket_prefix = "alb-logs-" # Prefix for the bucket name
   tags = {
-    Name = "alb-logs"
+    Name        = "alb-logs"
     Environment = "Dev"
   }
 }
@@ -36,7 +36,7 @@ resource "aws_lb_listener" "http" {
   protocol          = "HTTP"
 
   default_action {
-    type = "forward"
+    type             = "forward"
     target_group_arn = aws_lb_target_group.app_tg.arn
   }
 }
@@ -49,11 +49,11 @@ resource "aws_lb_target_group" "app_tg" {
   vpc_id   = module.vpc.vpc_id
 
   health_check {
-    path               = "/" # Your app's health check path
-    protocol           = "HTTP"
-    interval           = 30
-    timeout            = 10
-    healthy_threshold  = 2
+    path                = "/" # Your app's health check path
+    protocol            = "HTTP"
+    interval            = 30
+    timeout             = 10
+    healthy_threshold   = 2
     unhealthy_threshold = 2
   }
 }

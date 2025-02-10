@@ -17,12 +17,12 @@ resource "aws_db_instance" "mysql" {
 }
 
 resource "aws_db_subnet_group" "rds_subnet_group" {
-  name       = "mysql-subnet-group"
+  name = "mysql-subnet-group"
   subnet_ids = [
-    module.vpc.private_subnets[0], 
-    module.vpc.private_subnets[1], 
+    module.vpc.private_subnets[0],
+    module.vpc.private_subnets[1],
     module.vpc.private_subnets[2]
-    ]
+  ]
   tags = {
     Name = "Subnet group for RDS"
   }

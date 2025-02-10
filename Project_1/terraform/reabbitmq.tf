@@ -6,18 +6,18 @@ resource "aws_mq_broker" "activemq" {
   host_instance_type  = "mq.t3.micro"
   publicly_accessible = false
   security_groups     = [aws_security_group.activemq_sg.id]
-  subnet_ids          = [
-    module.vpc.private_subnets[0], 
-    module.vpc.private_subnets[1], 
+  subnet_ids = [
+    module.vpc.private_subnets[0],
+    module.vpc.private_subnets[1],
     module.vpc.private_subnets[2]
-]
+  ]
 
   user {
     username = var.rmquser
     password = var.rmqpass
   }
 
-  tags   = {
+  tags = {
     Name = "activemq-cluster"
   }
 }
