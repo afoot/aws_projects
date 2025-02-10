@@ -62,3 +62,34 @@ variable "region" {
     description = "rmq password"
   }
   
+  variable "key_name" {
+    description = "aws key"
+  }
+
+  variable "instance_count" {
+    default = 1
+  }
+
+  variable "user" {
+    description = "user for bastion host"
+  }
+
+  variable "private_key" {
+    description = "private key to connect bastion host"
+  }
+
+  variable "dbuser" {
+    description = "username word for db"
+  }
+
+  variable "dbpass" {
+    description = "password for db"
+  }
+
+  variable "dbname" {
+    description = "db name"
+  }
+
+  variable "my_ip" {
+    description = "your external ip to connect bastion host"
+  }

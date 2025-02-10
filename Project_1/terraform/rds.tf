@@ -5,7 +5,7 @@ resource "aws_db_instance" "mysql" {
   engine                 = "mysql"
   engine_version         = "5.7.44"
   instance_class         = "db.t3.micro"
-  name                   = var.dbname
+  db_name                = var.dbname
   username               = var.dbuser
   password               = var.dbpass
   parameter_group_name   = "default.mysql5.6"
