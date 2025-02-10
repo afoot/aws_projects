@@ -44,7 +44,7 @@ resource "aws_lb_listener" "http" {
 #  Target Group
 resource "aws_lb_target_group" "app_tg" {
   name     = "my-app-tg"
-  port     = 80 # Your application port
+  port     = 8080 # Your application port
   protocol = "HTTP"
   vpc_id   = aws_vpc.main.id
 
