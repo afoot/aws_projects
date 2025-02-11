@@ -2,6 +2,7 @@
 
 resource "aws_s3_bucket" "alb_logs" {
   bucket_prefix = "alb-logs-" # Prefix for the bucket name
+  force_destroy = true 
   tags = {
     Name        = "alb-logs"
     Environment = "Dev"
@@ -39,8 +40,6 @@ resource "aws_lb" "alb" {
     module.vpc.public_subnets[1],
     module.vpc.public_subnets[2]
   ]
-
-  enable_deletion_protection = true
 
   access_logs {
     bucket  = aws_s3_bucket.alb_logs.id

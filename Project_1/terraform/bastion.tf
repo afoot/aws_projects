@@ -2,19 +2,14 @@ resource "aws_instance" "bastion" {
   ami                    = var.ami
   instance_type          = var.instance_type
   key_name               = var.key_name
+  count                  = var.instance_count
   subnet_id              = module.vpc.public_subnets[0]
   vpc_security_group_ids = [aws_security_group.bastion_sg.id]
+  associate_public_ip_address = true
 
   tags = {
     Name = "bastion"
 
-  }
-
-  connection {
-    type        = "ssh"
-    user        = var.user
-    private_key = local.private_key
-    host        = self.public_ip
   }
 
   provisioner "file" {
@@ -24,6 +19,13 @@ resource "aws_instance" "bastion" {
       dbpass       = var.dbpass
     })
     destination = "/tmp/dbdeploy.sh"
+
+    connection {
+      type        = "ssh"
+      user        = var.user
+      private_key = local.private_key
+      host        = self.public_ip
+    }
   }
 
   provisioner "remote-exec" {
@@ -31,7 +33,14 @@ resource "aws_instance" "bastion" {
       "chmod +x /tmp/dbdeploy.sh",
       "sudo /tmp/dbdeploy.sh"
     ]
-  }
 
+    connection {
+      type        = "ssh"
+      user        = var.user
+      private_key = local.private_key
+      host        = self.public_ip
+    }
+  }
   depends_on = [aws_db_instance.mysql]
 }
+
