@@ -1,13 +1,12 @@
 # 1. Launch an Initial Instance (for configuration)
 
 resource "aws_instance" "app" {
-  ami                    = var.ami
-  instance_type          = var.instance_type
-  key_name               = "aws_projects"
-  subnet_id              = module.vpc.public_subnets[0]
-  user_data              = file("templates/setup_instance.sh") # Script to configure the instance
-  vpc_security_group_ids = [aws_security_group.app_sg.id]
-  associate_public_ip_address = true
+  ami                         = var.ami
+  instance_type               = var.instance_type
+  key_name                    = "aws_projects"
+  subnet_id                   = module.vpc.public_subnets[0]
+  user_data                   = file("templates/setup_instance.sh") # Script to configure the instance
+  vpc_security_group_ids      = [aws_security_group.app_sg.id]
 
   provisioner "local-exec" {
     command = "aws ec2 wait instance-status-ok --instance-ids ${self.id}"

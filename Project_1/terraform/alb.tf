@@ -2,7 +2,7 @@
 
 resource "aws_s3_bucket" "alb_logs" {
   bucket_prefix = "alb-logs-" # Prefix for the bucket name
-  force_destroy = true 
+  force_destroy = true
   tags = {
     Name        = "alb-logs"
     Environment = "Dev"
