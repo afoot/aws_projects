@@ -3,7 +3,6 @@ resource "aws_instance" "bastion" {
   instance_type          = var.instance_type
   key_name               = var.key_name
   subnet_id              = module.vpc.public_subnets[0]
-  count                  = var.instance_count
   vpc_security_group_ids = [aws_security_group.bastion_sg.id]
 
   tags = {

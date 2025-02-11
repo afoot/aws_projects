@@ -19,18 +19,10 @@ resource "aws_s3_bucket_policy" "alb_logs_policy" {
       {
         Effect = "Allow"
         Principal = {
-          "AWS": "arn:aws:iam::127311923021:root"
+          "AWS" : "arn:aws:iam::127311923021:root"
         }
         Action   = "s3:PutObject"
         Resource = "${aws_s3_bucket.alb_logs.arn}/*"
-        Condition = {
-          StringEquals = {
-            "aws:SourceAccount" = "${var.account_id}"
-          }
-          ArnLike = {
-            "aws:SourceArn" = "arn:aws:elasticloadbalancing:us-east-1:${var.account_id}:loadbalancer/*"
-          }
-        }
       }
     ]
   })
