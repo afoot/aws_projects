@@ -8,6 +8,34 @@ resource "aws_s3_bucket" "alb_logs" {
   }
 }
 
+# Setup S3 bucket policy
+
+resource "aws_s3_bucket_policy" "alb_logs_policy" {
+  bucket = aws_s3_bucket.alb_logs.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "elasticloadbalancing.amazonaws.com"
+        }
+        Action   = "s3:PutObject"
+        Resource = "${aws_s3_bucket.alb_logs.arn}/*"
+        Condition = {
+          StringEquals = {
+            "aws:SourceAccount" = "${var.account_id}"
+          }
+          ArnLike = {
+            "aws:SourceArn" = "arn:aws:elasticloadbalancing:us-east-1:${var.account_id}:loadbalancer/*"
+          }
+        }
+      }
+    ]
+  })
+}
+
 # Setup ALB
 resource "aws_lb" "alb" {
   name               = "alb-aws"

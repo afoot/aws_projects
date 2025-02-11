@@ -12,7 +12,11 @@ resource "aws_instance" "bastion" {
   }
 
   provisioner "file" {
-    content     = templatefile("templates/db_deploy.tftpl", { rds-endpoint = aws_db_instance.mysql.address, dbuser = var.dbuser, dbpass = var.dbpass })
+    content = templatefile("templates/db_deploy.tftpl", {
+      rds-endpoint = aws_db_instance.mysql.address,
+      dbuser       = var.dbuser,
+      dbpass       = var.dbpass
+    })
     destination = "/tmp/dbdeploy.sh"
   }
 
@@ -24,6 +28,7 @@ resource "aws_instance" "bastion" {
   }
 
   connection {
+    type        = "ssh"
     user        = var.user
     private_key = local.private_key
     host        = self.public_ip

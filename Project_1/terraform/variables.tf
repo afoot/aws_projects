@@ -99,3 +99,6 @@ locals {
   private_key = file(var.private_key_path)
 }
 
+variable "account_id" {
+  description = "AWS account ID"
+}
