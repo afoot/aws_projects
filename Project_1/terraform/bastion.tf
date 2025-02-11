@@ -1,6 +1,6 @@
 resource "aws_instance" "bastion" {
   ami                    = var.ami
-  instance_type          = "t2.micro"
+  instance_type          = var.instance_type
   key_name               = var.key_name
   subnet_id              = module.vpc.public_subnets[0]
   count                  = var.instance_count
@@ -35,4 +35,8 @@ resource "aws_instance" "bastion" {
   }
 
   depends_on = [aws_db_instance.mysql]
+
+  provisioner "local-exec" {
+    command = "aws ec2 wait instance-status-ok --instance-ids ${self.id}"
+  }
 }
