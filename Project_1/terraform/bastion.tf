@@ -11,6 +11,13 @@ resource "aws_instance" "bastion" {
 
   }
 
+  connection {
+    type        = "ssh"
+    user        = var.user
+    private_key = local.private_key
+    host        = self.public_ip
+  }
+
   provisioner "file" {
     content = templatefile("templates/db_deploy.tftpl", {
       rds-endpoint = aws_db_instance.mysql.address,
@@ -27,16 +34,5 @@ resource "aws_instance" "bastion" {
     ]
   }
 
-  connection {
-    type        = "ssh"
-    user        = var.user
-    private_key = local.private_key
-    host        = self.public_ip
-  }
-
   depends_on = [aws_db_instance.mysql]
-
-  provisioner "local-exec" {
-    command = "aws ec2 wait instance-status-ok --instance-ids ${self.id}"
-  }
 }
