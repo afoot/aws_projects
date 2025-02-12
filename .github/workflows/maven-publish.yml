@@ -32,7 +32,7 @@ jobs:
         working-directory: Project_1/
         run: | 
           mvn install -DskipTests
-          ls -l ${{ github.workspace }}/target/
+          ls -l ${{ github.workspace }}
           ls -l target/
 
       - name: Upload artifact to AWS S3
