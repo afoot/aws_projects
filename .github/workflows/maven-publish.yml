@@ -20,11 +20,11 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::${{ secret.AWS_AWS_ACCOUNT_ID }}:role/${{ AWS_ROLE }}
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.AWS_ROLE }}
           aws-region: us-west-2
 
       - name: Build artifacts
-       run: | 
+        run: | 
           mvn install
           mv target/vprofile-v2.war .
           rm -rf target
@@ -33,4 +33,4 @@ jobs:
           ls -l target/
 
       - name: Upload artifact to AWS S3
-        run: aws s3 cp target/vprofile-v2.war s3://${{ secret.AWS_S3 }}/vprofile-v2.war
+        run: aws s3 cp target/vprofile-v2.war s3://${{ secrets.AWS_S3 }}/vprofile-v2.war
