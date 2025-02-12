@@ -29,6 +29,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Build artifacts
+        working-directory: Project_1/
         run: | 
           mvn install
           mv target/vprofile-v2.war .
