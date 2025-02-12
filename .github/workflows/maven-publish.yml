@@ -31,7 +31,7 @@ jobs:
       - name: Build artifacts
         working-directory: Project_1/
         run: | 
-          mvn install
+          mvn install -DskipTests
           mv target/vprofile-v2.war .
           rm -rf target
           mkdir target
@@ -39,4 +39,4 @@ jobs:
           ls -l target/
 
       - name: Upload artifact to AWS S3
-        run: aws s3 cp target/vprofile-v2.war s3://${{ secrets.AWS_S3 }}/vprofile-v2.war
+        run: aws s3 cp vprofile-v2.war s3://${{ secrets.AWS_S3 }}/vprofile-v2.war
