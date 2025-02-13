@@ -1,10 +1,22 @@
 #!/usr/bin/env bash
 
-# Update package lists
-sudo apt update -y
+# Update the package list
+sudo apt-get update
 
-# Install Java (OpenJDK)
-sudo apt install -y default-jdk
+# Install required dependencies, including Java
+sudo apt-get install -y unzip curl default-jdk
+
+# Download the AWS CLI version 2 installer
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+
+# Unzip the installer
+unzip awscliv2.zip
+
+# Run the installer
+sudo ./aws/install
+
+# Clean up
+rm -rf awscliv2.zip aws
 
 # Create Tomcat user and group
 sudo useradd -m -d /opt/tomcat -U -s /bin/false tomcat
@@ -19,12 +31,6 @@ sudo tar -xzf tomcat.tar.gz -C /opt/tomcat --strip-components=1
 # Set file permissions
 sudo chown -R tomcat:tomcat /opt/tomcat/
 sudo chmod -R u+x /opt/tomcat/bin
-
-# Configure Tomcat (tomcat-users.xml)
-sudo nano /opt/tomcat/conf/tomcat-users.xml  # Add user with manager-gui role
-
-# Configure Tomcat (server.xml - optional for remote access)
-# sudo nano /opt/tomcat/conf/server.xml # Modify <Connector> if needed
 
 # Systemd service file
 sudo tee /etc/systemd/system/tomcat.service > /dev/null <<EOF
@@ -50,4 +56,5 @@ sudo systemctl daemon-reload
 sudo systemctl enable tomcat
 sudo systemctl start tomcat
 
+# Allow traffic on port 8080
 sudo ufw allow 8080
