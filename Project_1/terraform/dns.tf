@@ -1,62 +1,38 @@
-provider "aws" {
-  region = "us-west-2"
-}
 
 resource "aws_route53_zone" "internal" {
-  name = "internal.example.com"
+  name = "saturn.local"
   vpc {
-    vpc_id = "vpc-xxxxxxxx"
+    vpc_id = module.vpc.vpc_id
   }
-  comment = "Private hosted zone for internal.example.com"
-}
-
-resource "aws_instance" "app_server" {
-  ami           = "ami-xxxxxxxx"
-  instance_type = "t2.micro"
-  subnet_id     = "subnet-xxxxxxxx"
-  tags = {
-    Name = "AppServer"
-  }
-}
-
-resource "aws_instance" "activemq" {
-  ami           = "ami-xxxxxxxx"
-  instance_type = "t2.micro"
-  subnet_id     = "subnet-xxxxxxxx"
-  tags = {
-    Name = "ActiveMQ"
-  }
-}
-
-resource "aws_instance" "memcached" {
-  ami           = "ami-xxxxxxxx"
-  instance_type = "t2.micro"
-  subnet_id     = "subnet-xxxxxxxx"
-  tags = {
-    Name = "Memcached"
-  }
+  comment = "Private hosted zone for saturn.local"
 }
 
 resource "aws_route53_record" "app_server" {
   zone_id = aws_route53_zone.internal.zone_id
-  name    = "app.internal.example.com"
+  name    = "app.saturn.local"
   type    = "A"
   ttl     = "300"
-  records = [aws_instance.app_server.private_ip]
+  records = [aws_instance.app.private_ip]
+
+  depends_on = [aws_instance.app]
 }
 
 resource "aws_route53_record" "activemq" {
   zone_id = aws_route53_zone.internal.zone_id
-  name    = "activemq.internal.example.com"
+  name    = "activemq.saturn.local"
   type    = "A"
   ttl     = "300"
-  records = [aws_instance.activemq.private_ip]
+  records = [aws_mq_broker.activemq.instances.0.ip_address]
+
+    depends_on = [aws_mq_broker.activemq]
 }
 
 resource "aws_route53_record" "memcached" {
   zone_id = aws_route53_zone.internal.zone_id
-  name    = "memcached.internal.example.com"
+  name    = "memcached.saturn.local"
   type    = "A"
   ttl     = "300"
-  records = [aws_instance.memcached.private_ip]
+  records = [aws_elasticache_cluster.memcached.cache_nodes.0.address]
+
+  depends_on = [aws_elasticache_cluster.memcached]
 }
