@@ -32,8 +32,6 @@ jobs:
         working-directory: Project_1/
         run: | 
           mvn install -DskipTests
-          ls -l ${{ github.workspace }}
-          ls -l target/
 
       - name: Upload artifact to AWS S3
         run: aws s3 cp Project_1/target/vprofile-v2.war s3://${{ secrets.AWS_S3 }}/
