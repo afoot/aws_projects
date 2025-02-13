@@ -102,3 +102,7 @@ locals {
 variable "account_id" {
   description = "AWS account ID"
 }
+
+variable "bucket_name" {
+  description = "Name of the S3 bucket"
+}
