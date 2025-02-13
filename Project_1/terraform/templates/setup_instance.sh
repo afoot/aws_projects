@@ -23,7 +23,7 @@ sudo useradd -m -d /opt/tomcat -U -s /bin/false tomcat
 
 # Download Tomcat (replace with the desired version)
 TOMCAT_VERSION="10.1.34"  # Example version
-wget "https://dlcdn.apache.org/tomcat/tomcat-10/v10.1.34/bin/apache-tomcat-10.1.34.tar.gz" -O tomcat.tar.gz
+wget "https://archive.apache.org/dist/tomcat/tomcat-10/v10.1.34/bin/apache-tomcat-10.1.34.tar.gz" -O tomcat.tar.gz
 
 # Extract Tomcat to /opt/
 sudo tar -xzf tomcat.tar.gz -C /opt/tomcat --strip-components=1
