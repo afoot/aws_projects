@@ -26,7 +26,7 @@ resource "aws_route53_record" "activemq" {
   ttl     = "300"
   records = [aws_mq_broker.activemq.instances.0.ip_address]
 
-    depends_on = [aws_mq_broker.activemq]
+  depends_on = [aws_mq_broker.activemq]
 }
 
 resource "aws_route53_record" "memcached" {

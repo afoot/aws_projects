@@ -18,7 +18,7 @@ resource "aws_iam_role" "ec2_s3_access" {
 resource "aws_iam_policy" "s3_access_policy" {
   name        = "s3_access_policy"
   description = "Policy to allow EC2 instances to access S3 buckets"
-  
+
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -27,7 +27,7 @@ resource "aws_iam_policy" "s3_access_policy" {
           "s3:GetObject",
           "s3:ListBucket"
         ]
-        Effect   = "Allow"
+        Effect = "Allow"
         Resource = [
           "arn:aws:s3:::${var.bucket_name}",
           "arn:aws:s3:::${var.bucket_name}/*"
