@@ -3,7 +3,7 @@
 resource "aws_instance" "app" {
   ami                    = var.ami
   instance_type          = var.instance_type
-  key_name               = "aws_projects"
+  key_name               = var.key_name
   subnet_id              = module.vpc.public_subnets[0]
   user_data              = file("templates/setup_instance.sh") # Script to configure the instance
   vpc_security_group_ids = [aws_security_group.app_sg.id]
@@ -32,6 +32,11 @@ resource "aws_launch_template" "app_lt" {
   instance_type          = var.instance_type
   key_name               = "aws_projects"
   vpc_security_group_ids = [aws_security_group.app_sg.id]
+
+  network_interfaces {
+    associate_public_ip_address = true
+    device_index                = 0
+  }
 
   iam_instance_profile {
     name = aws_iam_instance_profile.ec2_s3_access_profile.name
