@@ -1,13 +1,13 @@
 # 1. Launch an Initial Instance (for configuration)
 
 resource "aws_instance" "app" {
-  ami                    = var.ami
-  instance_type          = var.instance_type
-  key_name               = var.key_name
-  subnet_id              = module.vpc.public_subnets[0]
-  user_data              = file("templates/setup_instance.sh") # Script to configure the instance
-  vpc_security_group_ids = [aws_security_group.app_sg.id]
-  iam_instance_profile   = aws_iam_instance_profile.ec2_s3_access_profile.name
+  ami                         = var.ami
+  instance_type               = var.instance_type
+  key_name                    = var.key_name
+  subnet_id                   = module.vpc.public_subnets[0]
+  user_data                   = file("templates/setup_instance.sh") # Script to configure the instance
+  vpc_security_group_ids      = [aws_security_group.app_sg.id]
+  iam_instance_profile        = aws_iam_instance_profile.ec2_s3_access_profile.name
   associate_public_ip_address = true
 
   provisioner "local-exec" {
@@ -31,12 +31,13 @@ resource "aws_launch_template" "app_lt" {
   name_prefix            = "lt-"
   image_id               = aws_ami_from_instance.ami.id
   instance_type          = var.instance_type
-  key_name               = "aws_projects"
-  vpc_security_group_ids = [aws_security_group.app_sg.id]
+  key_name               = var.key_name
 
   network_interfaces {
     associate_public_ip_address = true
     device_index                = 0
+    subnet_id                   = module.vpc.public_subnets[0]
+    security_groups             = [aws_security_group.app_sg.id]
   }
 
   iam_instance_profile {

@@ -1,4 +1,4 @@
-# VPC
+# Purpose: This file is used to create a VPC with 3 public and 3 private subnets in 3 different availability zones.
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.18.0"
@@ -19,4 +19,14 @@ module "vpc" {
     Terraform   = "true"
     Environment = "Dev"
   }
+}
+
+resource "aws_vpc_dhcp_options" "dns" {
+  domain_name         = "saturn.local"
+  domain_name_servers = ["AmazonProvidedDNS"]
+}
+
+resource "aws_vpc_dhcp_options_association" "dns" {
+  vpc_id          = module.vpc.vpc_id
+  dhcp_options_id = aws_vpc_dhcp_options.dns.id
 }
