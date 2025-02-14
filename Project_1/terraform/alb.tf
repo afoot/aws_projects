@@ -72,11 +72,11 @@ resource "aws_lb_target_group" "app_tg" {
   vpc_id   = module.vpc.vpc_id
 
   health_check {
-    path                = "/" # Your app's health check path
+    path                = "/login" # Your app's health check path
     protocol            = "HTTP"
     interval            = 30
     timeout             = 10
-    healthy_threshold   = 2
+    healthy_threshold   = 3
     unhealthy_threshold = 2
   }
 }

@@ -51,6 +51,11 @@ ExecStop=/opt/tomcat/bin/catalina.sh stop
 WantedBy=multi-user.target
 EOF
 
+# Replace the default ROOT webapp with the application
+sudo rm -rf /opt/tomcat/webapps/ROOT
+aws s3 cp s3://s3-for-artifacts-1221/vprofile-v2.war /tmp/ROOT.war
+sudo mv /tmp/ROOT.war /opt/tomcat/webappa/ROOT.war
+
 # Enable and start Tomcat
 sudo systemctl daemon-reload
 sudo systemctl enable tomcat
