@@ -32,9 +32,9 @@ resource "aws_route53_record" "activemq" {
 resource "aws_route53_record" "memcached" {
   zone_id = aws_route53_zone.internal.zone_id
   name    = "memcached.saturn.local"
-  type    = "A"
+  type    = "CNAME"
   ttl     = "300"
-  records = [aws_elasticache_cluster.memcached.cache_nodes.0.address]
+  records = [aws_elasticache_cluster.memcached.configuration_endpoint]
 
   depends_on = [aws_elasticache_cluster.memcached]
 }
@@ -42,9 +42,9 @@ resource "aws_route53_record" "memcached" {
 resource "aws_route53_record" "mysql" {
   zone_id = aws_route53_zone.internal.zone_id
   name    = "mysql.saturn.local"
-  type    = "A"
+  type    = "CNAME"
   ttl     = "300"
-  records = [aws_db_instance.mysql.address]
+  records = [aws_db_instance.mysql.endpoint]
 
   depends_on = [aws_db_instance.mysql]
 }
