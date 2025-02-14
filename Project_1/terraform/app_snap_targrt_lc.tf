@@ -8,6 +8,7 @@ resource "aws_instance" "app" {
   user_data              = file("templates/setup_instance.sh") # Script to configure the instance
   vpc_security_group_ids = [aws_security_group.app_sg.id]
   iam_instance_profile   = aws_iam_instance_profile.ec2_s3_access_profile.name
+  associate_public_ip_address = true
 
   provisioner "local-exec" {
     command = "aws ec2 wait instance-status-ok --instance-ids ${self.id}"
