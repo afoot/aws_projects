@@ -28,10 +28,10 @@ resource "aws_ami_from_instance" "ami" {
 # 3. Launch Configuration (using the AMI)
 
 resource "aws_launch_template" "app_lt" {
-  name_prefix            = "lt-"
-  image_id               = aws_ami_from_instance.ami.id
-  instance_type          = var.instance_type
-  key_name               = var.key_name
+  name_prefix   = "lt-"
+  image_id      = aws_ami_from_instance.ami.id
+  instance_type = var.instance_type
+  key_name      = var.key_name
 
   network_interfaces {
     associate_public_ip_address = true

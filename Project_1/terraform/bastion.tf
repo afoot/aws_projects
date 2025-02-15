@@ -25,7 +25,7 @@ resource "aws_instance" "bastion" {
 
   provisioner "file" {
     content = templatefile("templates/db_deploy.tftpl", {
-      rds-endpoint = [aws_db_instance.mysql.endpoint],
+      rds-endpoint = aws_db_instance.mysql.endpoint,
       dbuser       = var.dbuser,
       dbpass       = var.dbpass
     })
