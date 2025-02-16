@@ -29,14 +29,24 @@ resource "aws_route53_record" "activemq" {
   depends_on = [aws_mq_broker.activemq]
 }
 
+locals {
+  mem_endpoint = aws_elasticache_cluster.memcached.configuration_endpoint
+  mem_hostname = regex("^([^:]+)", local.mem_endpoint)
+}
+
 resource "aws_route53_record" "memcached" {
   zone_id = aws_route53_zone.internal.zone_id
   name    = "memcached.saturn.local"
   type    = "CNAME"
   ttl     = "300"
-  records = [aws_elasticache_cluster.memcached.configuration_endpoint]
+  records = [local.mem_hostname]
 
   depends_on = [aws_elasticache_cluster.memcached]
+}
+
+locals {
+  rds_endpoint = aws_db_instance.mysql.endpoint
+  rds_hostname = regex("^([^:]+)", local.rds_endpoint)
 }
 
 resource "aws_route53_record" "mysql" {
@@ -44,7 +54,7 @@ resource "aws_route53_record" "mysql" {
   name    = "mysql.saturn.local"
   type    = "CNAME"
   ttl     = "300"
-  records = [aws_db_instance.mysql.endpoint]
+  records = [local.rds_hostname]
 
   depends_on = [aws_db_instance.mysql]
 }
