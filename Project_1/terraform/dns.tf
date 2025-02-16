@@ -31,7 +31,7 @@ resource "aws_route53_record" "activemq" {
 
 locals {
   mem_endpoint = aws_elasticache_cluster.memcached.configuration_endpoint
-  mem_hostname = regex("^([^:]+)", local.mem_endpoint)
+  mem_hostname = element(split(":", local.mem_endpoint), 0)
 }
 
 resource "aws_route53_record" "memcached" {
@@ -46,7 +46,7 @@ resource "aws_route53_record" "memcached" {
 
 locals {
   rds_endpoint = aws_db_instance.mysql.endpoint
-  rds_hostname = regex("^([^:]+)", local.rds_endpoint)
+  rds_hostname = element(split(":", local.rds_endpoint), 0)
 }
 
 resource "aws_route53_record" "mysql" {

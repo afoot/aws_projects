@@ -15,19 +15,11 @@ module "vpc" {
   enable_dns_hostnames = true
   enable_dns_support   = true
   enable_dhcp_options  = true
+  dhcp_options_domain_name = "saturn.local"
+  dhcp_options_domain_name_servers = ["AmazonProvidedDNS"]
 
   tags = {
     Terraform   = "true"
     Environment = "Dev"
   }
-}
-
-resource "aws_vpc_dhcp_options" "dns" {
-  domain_name         = "saturn.local"
-  domain_name_servers = ["AmazonProvidedDNS"]
-}
-
-resource "aws_vpc_dhcp_options_association" "dns" {
-  vpc_id          = module.vpc.vpc_id
-  dhcp_options_id = aws_vpc_dhcp_options.dns.id
 }
