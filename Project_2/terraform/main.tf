@@ -1,50 +1,40 @@
-resource "aws_ecr_repository" "this" {
-  name = var.ecr_repository_name
+# This file is the main entry point for the terraform configuration. 
+# It defines the modules that will be used to create the infrastructure.
+
+module "vpc" {
+  source = "./modules/vpc"
 }
 
-resource "aws_iam_role" "ecr_role" {
-  name = "${var.ecr_repository_name}-ecr-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Principal = {
-          Service = "ecr.amazonaws.com"
-        }
-        Effect = "Allow"
-      }
-    ]
-  })
+module "security" {
+  source         = "./modules/security"
 }
 
-resource "aws_iam_policy" "ecr_policy" {
-  name        = "${var.ecr_repository_name}-ecr-policy"
-  description = "ECR policy for ${var.ecr_repository_name}"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = [
-          "ecr:BatchCheckLayerAvailability",
-          "ecr:BatchGetImage",
-          "ecr:DescribeRepositories",
-          "ecr:GetAuthorizationToken",
-          "ecr:PutImage",
-          "ecr:InitiateLayerUpload",
-          "ecr:UploadLayerPart",
-          "ecr:CompleteLayerUpload"
-        ]
-        Effect   = "Allow"
-        Resource = aws_ecr_repository.this.arn
-      }
-    ]
-  })
+module "iam" {
+  source = "./modules/iam"
 }
 
-resource "aws_iam_role_policy_attachment" "ecr_role_policy_attachment" {
-  policy_arn = aws_iam_policy.ecr_policy.arn
-  role       = aws_iam_role.ecr_role.name
+module "ecr" {
+  source               = "./modules/ecr/main.tf"
+  ecs_repository_name  = var.ecs_repository_name
+  scan_on_push         = var.scan_on_push
+  image_tag_mutability = var.image_tag_mutability
+}
+
+module "ecs_cluster" {
+  source       = "./modules/ecs-cluster"
+}
+
+module "ecs_task_definition" {
+  source = "./modules/ecs-task-definition"
+  ecs_task_definition_family = var.ecs_task_definition_family
+  cpu                         = var.cpu
+  memory                      = var.memory
+  container_name              = var.container_name
+  ecr_repository_url          = var.ecr_repository_url
+  container_port              = var.container_port
+}
+
+module "ecs_service" {
+  source              = "./modules/ecs-service"
+
 }

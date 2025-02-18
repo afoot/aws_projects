@@ -5,29 +5,20 @@ This project sets up an AWS ECS infrastructure using Terraform. It includes the 
 ## Project Structure
 
 ```
-terraform
-├── modules
-│   ├── ecr
-│   │   ├── main.tf
-│   │   ├── outputs.tf
-│   │   ├── variables.tf
-│   ├── ecs-cluster
-│   │   ├── main.tf
-│   │   ├── outputs.tf
-│   │   ├── variables.tf
-│   ├── ecs-task-definition
-│   │   ├── main.tf
-│   │   ├── outputs.tf
-│   │   ├── variables.tf
-│   └── ecs-service
-│       ├── main.tf
-│       ├── outputs.tf
-│       ├── variables.tf
-├── main.tf
-├── outputs.tf
-├── variables.tf
-├── provider.tf
-└── README.md
+Project_2/
+├── terraform/
+│   ├── modules/
+│   │   ├── ecr/
+│   │   ├── ecs-cluster/
+│   │   ├── ecs-task-definition/
+│   │   ├── ecs-service/
+│   │   ├── iam/
+│   │   ├── vpc/
+│   │   └── security/
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── outputs.tf
+│   └── provider.tf
 ```
 
 ## Prerequisites
@@ -41,7 +32,7 @@ terraform
 1. Clone the repository:
    ```
    git clone <repository-url>
-   cd terraform-ecs-project
+   cd terraform
    ```
 
 2. Update the `variables.tf` files in the modules to customize your infrastructure as needed.

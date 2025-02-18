@@ -1,13 +1,33 @@
 resource "aws_ecr_repository" "this" {
-  name                 = var.ecr_repository_name
-  image_tag_mutability = "MUTABLE"
-  lifecycle {
-    prevent_destroy = true
+  name                 = var.ecs_repository_name
+  image_tag_mutability = var.image_tag_mutability
+
+  image_scanning_configuration {
+    scan_on_push = var.scan_on_push
   }
 }
 
+resource "aws_ecr_lifecycle_policy" "this" {
+  repository = aws_ecr_repository.this.name
+
+  policy = jsonencode({
+    rules = [{
+      rulePriority = 1
+      description  = "Keep last 5 images"
+      selection = {
+        tagStatus   = "any"
+        countType   = "imageCountMoreThan"
+        countNumber = 5
+      }
+      action = {
+        type = "expire"
+      }
+    }]
+  })
+}
+
 resource "aws_iam_role" "ecr_role" {
-  name = "${var.ecr_repository_name}-ecr-role"
+  name = "${var.ecs_repository_name}-ecr-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -25,8 +45,8 @@ resource "aws_iam_role" "ecr_role" {
 }
 
 resource "aws_iam_policy" "ecr_policy" {
-  name        = "${var.ecr_repository_name}-ecr-policy"
-  description = "ECR policy for ${var.ecr_repository_name}"
+  name        = "${var.ecs_repository_name}-ecr-policy"
+  description = "ECR policy for ${var.ecs_repository_name}"
 
   policy = jsonencode({
     Version = "2012-10-17"

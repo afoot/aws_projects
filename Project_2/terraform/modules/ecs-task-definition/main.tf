@@ -1,16 +1,15 @@
-resource "aws_ecs_task_definition" "ecs_devops_sandbox" {
-  family                   = var.family
-  network_mode             = var.network_mode
-  requires_compatibilities = var.requires_compatibilities
+resource "aws_ecs_task_definition" "this" {
+  family                   = var.ecs_task_definition_family
+  requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
   cpu                      = var.cpu
   memory                   = var.memory
-  execution_role_arn      = var.execution_role_arn
-  task_role_arn           = var.task_role_arn
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
 
   container_definitions = jsonencode([
     {
       name      = var.container_name
-      image     = var.container_image
+      image     = "${var.ecr_repository_url}:latest"
       essential = true
       portMappings = [
         {
@@ -18,6 +17,14 @@ resource "aws_ecs_task_definition" "ecs_devops_sandbox" {
           protocol      = "tcp"
         }
       ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group"         = "/ecs/${var.ecs_task_definition_family}"
+          "awslogs-region"        = var.aws_region
+          "awslogs-stream-prefix" = "ecs"
+        }
+      }
     }
   ])
 }
