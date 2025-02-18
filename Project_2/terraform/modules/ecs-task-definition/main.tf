@@ -1,7 +1,7 @@
 resource "aws_ecs_task_definition" "this" {
   family                   = var.ecs_task_definition_family
   requires_compatibilities = ["FARGATE"]
-  network_mode             = "awsvpc"
+  network_mode             = var.network_mode
   cpu                      = var.cpu
   memory                   = var.memory
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
@@ -9,7 +9,7 @@ resource "aws_ecs_task_definition" "this" {
   container_definitions = jsonencode([
     {
       name      = var.container_name
-      image     = "${var.ecr_repository_url}:latest"
+      image     = "${var.ecs_repository_url}:latest"
       essential = true
       portMappings = [
         {

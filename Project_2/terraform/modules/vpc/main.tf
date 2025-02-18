@@ -55,7 +55,7 @@ resource "aws_nat_gateway" "main" {
 # Elastic IP for NAT Gateway
 resource "aws_eip" "nat" {
   count = length(var.public_subnets)
-  vpc   = true
+  associate_with_private_ip = true
 
   tags = {
     Name = "nat-eip-${count.index + 1}"

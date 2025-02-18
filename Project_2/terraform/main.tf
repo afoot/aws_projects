@@ -11,13 +11,11 @@ module "security" {
 
 module "iam" {
   source = "./modules/iam"
+  ecs_repository_name = var.ecs_repository_name
 }
 
 module "ecr" {
-  source               = "./modules/ecr/main.tf"
-  ecs_repository_name  = var.ecs_repository_name
-  scan_on_push         = var.scan_on_push
-  image_tag_mutability = var.image_tag_mutability
+  source               = "./modules/ecr"
 }
 
 module "ecs_cluster" {
@@ -26,15 +24,20 @@ module "ecs_cluster" {
 
 module "ecs_task_definition" {
   source = "./modules/ecs-task-definition"
-  ecs_task_definition_family = var.ecs_task_definition_family
-  cpu                         = var.cpu
-  memory                      = var.memory
-  container_name              = var.container_name
-  ecr_repository_url          = var.ecr_repository_url
-  container_port              = var.container_port
+  cpu = var.cpu
+  container_image = var.container_image
+  memory = var.memory
+  container_name = var.container_name
+  aws_region = var.aws_region
+  ecs_repository_url = var.ecs_repository_url
 }
 
 module "ecs_service" {
-  source              = "./modules/ecs-service"
-
+  source             = "./modules/ecs-service"
+  task_definition_arn = var.task_definition_arn
+  target_group_arn    = var.target_group_arn
+  cluster_id          = var.cluster_id
+  container_port      = var.container_port
+  subnet_ids          = var.subnet_ids
+  container_name      = var.container_name
 }

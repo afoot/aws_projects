@@ -1,33 +1,15 @@
 # Define the variables that will be used in the Terraform configuration.
-
 variable "ecs_repository_name" {
   description = "The name of the ECR repository"
   type        = string
   default     = "ecs-devops-sandbox-repository"
  }
 
-variable "ecs_cluster_name" {
-  description = "The name of the ECS cluster"
+variable "container_name" {
+  description = "The name of the container to associate with the service"
   type        = string
-  default     = "ecs-devops-sandbox-cluster"
-}
-
-variable "ecs_task_definition_family" {
-  description = "The family name for the ECS task definition"
-  type        = string
-  default     = "ecs-devops-sandbox-task-definition"
-}
-
-variable "ecs_service_name" {
-  description = "The name of the ECS service"
-  type        = string
-  default     = "ecs-devops-sandbox-service"
-}
-
-variable "desired_count" {
-  description = "The desired number of tasks for the ECS service"
-  type        = number
-  default     = 1
+  default = "ecs-devops-sandbox-container"
+  
 }
 
 variable "container_image" {
