@@ -7,37 +7,39 @@ module "vpc" {
 
 module "security" {
   source         = "./modules/security"
+  vpc_id         = module.vpc.vpc_id
+  container_port = var.container_port
 }
 
 module "iam" {
-  source = "./modules/iam"
+  source              = "./modules/iam"
   ecs_repository_name = var.ecs_repository_name
+  account_id          = var.account_id
 }
 
-module "ecr" {
-  source               = "./modules/ecr"
+
+module "ecs-cluster" {
+  source = "./modules/ecs-cluster"
 }
 
-module "ecs_cluster" {
-  source       = "./modules/ecs-cluster"
-}
-
-module "ecs_task_definition" {
-  source = "./modules/ecs-task-definition"
-  cpu = var.cpu
-  container_image = var.container_image
-  memory = var.memory
-  container_name = var.container_name
-  aws_region = var.aws_region
+module "ecs-task-definition" {
+  source             = "./modules/ecs-task-definition"
+  cpu                = var.cpu
+  container_image    = var.container_image
+  memory             = var.memory
+  container_name     = var.container_name
+  aws_region         = var.aws_region
   ecs_repository_url = var.ecs_repository_url
+  execution_role_arn = module.iam.ecs_task_execution_role_arn
 }
 
-module "ecs_service" {
-  source             = "./modules/ecs-service"
-  task_definition_arn = var.task_definition_arn
+module "ecs-service" {
+  source              = "./modules/ecs-service"
+  cluster_id          = module.ecs-cluster.cluster_id
+  task_definition_arn = module.ecs-task-definition.task_definition_arn
+  subnet_ids          = module.vpc.private_subnet_ids
+  security_group_ids  = [module.security.ecs_tasks_security_group_id]
   target_group_arn    = var.target_group_arn
-  cluster_id          = var.cluster_id
-  container_port      = var.container_port
-  subnet_ids          = var.subnet_ids
   container_name      = var.container_name
+  container_port      = var.container_port
 }

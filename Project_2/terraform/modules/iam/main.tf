@@ -36,7 +36,7 @@ resource "aws_iam_policy" "ecr_policy" {
           "ecr:CompleteLayerUpload"
         ]
         Effect   = "Allow"
-        Resource = aws_ecr_repository.this.arn
+        Resource = ["arn:aws:ecr:us-east-1:${var.account_id}:repository/test/ecs-devops-sandbox-repository"]
       }
     ]
   })

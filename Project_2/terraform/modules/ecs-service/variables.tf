@@ -46,3 +46,7 @@ variable "cluster_id" {
   type        = string
 }
 
+variable "security_group_ids" {
+  description = "The security groups to associate with the service"
+  type        = list(string)
+}

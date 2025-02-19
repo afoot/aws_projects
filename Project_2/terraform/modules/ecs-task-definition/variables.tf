@@ -1,3 +1,8 @@
+variable "execution_role_arn" {
+  description = "The ARN of the IAM role to use for the ECS task execution role"
+  type        = string
+}
+
 variable "ecs_task_definition_family" {
   description = "The family name for the ECS task definition"
   type        = string
@@ -56,5 +61,4 @@ variable "container_port" {
 variable "ecs_repository_url" {
   description = "The URL of the ECR repository"
   type        = string
-  default = module.ecr.aws_ecr_repository.this.repository_url
 }
