@@ -1,91 +1,24 @@
-resource "aws_vpc" "main" {
-  cidr_block           = var.vpc_cidr
+# Purpose: This file is used to create a VPC with 3 public and 3 private subnets in 3 different availability zones.
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "5.18.0"
+
+  name = var.vpc_name
+  cidr = var.vpc_cidr
+
+  azs             = var.azs
+  private_subnets = var.private_subnets
+  public_subnets  = var.public_subnets
+  public_subnet_tags = "${var.vpc_name}-public"
+  private_subnet_tags = "${var.vpc_name}-private"
+  
+  enable_nat_gateway   = true
+  single_nat_gateway   = true
   enable_dns_hostnames = true
   enable_dns_support   = true
+  enable_dhcp_options  = true
 
   tags = {
-    Name = "test-vpc"
-  }
-}
-
-# Public Subnets
-resource "aws_subnet" "public" {
-  count             = length(var.public_subnets)
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = var.public_subnets[count.index]
-  availability_zone = var.availability_zones[count.index]
-
-  tags = {
-    Name = "public-subnet-${count.index + 1}"
-  }
-}
-
-# Private Subnets
-resource "aws_subnet" "private" {
-  count             = length(var.private_subnets)
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = var.private_subnets[count.index]
-  availability_zone = var.availability_zones[count.index]
-
-  tags = {
-    Name = "private-subnet-${count.index + 1}"
-  }
-}
-
-# Internet Gateway
-resource "aws_internet_gateway" "main" {
-  vpc_id = aws_vpc.main.id
-
-  tags = {
-    Name = "test-igw"
-  }
-}
-
-# NAT Gateway
-resource "aws_nat_gateway" "main" {
-  count         = length(var.public_subnets)
-  allocation_id = aws_eip.nat[count.index].id
-  subnet_id     = aws_subnet.public[count.index].id
-
-  tags = {
-    Name = "nat-gateway-${count.index + 1}"
-  }
-}
-
-# Elastic IP for NAT Gateway
-resource "aws_eip" "nat" {
-  count = length(var.public_subnets)
-  associate_with_private_ip = true
-
-  tags = {
-    Name = "nat-eip-${count.index + 1}"
-  }
-}
-
-# Route Tables
-resource "aws_route_table" "public" {
-  vpc_id = aws_vpc.main.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.main.id
-  }
-
-  tags = {
-    Name = "public-rt"
-  }
-}
-
-resource "aws_route_table" "private" {
-  count  = length(var.private_subnets)
-  vpc_id = aws_vpc.main.id
-
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.main[count.index].id
-  }
-
-  tags = {
-    Name = "private-rt-${count.index + 1}"
-  }
+    Name   = "dev"
+     }
 }
