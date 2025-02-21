@@ -1,6 +1,6 @@
 output "vps_name" {
   value = module.vpc.vpc_name
- }
+}
 
 output "public_subnets" {
   value = module.vpc.public_subnets
@@ -16,4 +16,8 @@ output "azs" {
 
 output "public_subnets_cidr_blocks" {
   value = module.vpc.public_subnets_cidr_blocks
+}
+
+output "ecs_cluster_name" {
+  value = module.ecs_cluster.ecs_cluster_name
 }

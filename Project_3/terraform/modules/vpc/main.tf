@@ -9,8 +9,12 @@ module "vpc" {
   azs             = var.azs
   private_subnets = var.private_subnets
   public_subnets  = var.public_subnets
-  public_subnet_tags = "${var.vpc_name}-public"
-  private_subnet_tags = "${var.vpc_name}-private"
+  public_subnet_tags = {
+    Name = "public"
+  }
+  private_subnet_tags = {
+    Name = "private"
+  }
   
   enable_nat_gateway   = true
   single_nat_gateway   = true
