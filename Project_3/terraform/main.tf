@@ -17,3 +17,8 @@ module "ecs_task_definition" {
   execution_role_arn = var.execution_role_arn
   aws_region         = var.aws_region
 }
+
+module "ecs_service" {
+  source              = "./modules/ecs_service"
+  launch_type = var.launch_type
+}

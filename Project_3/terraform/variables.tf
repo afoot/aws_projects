@@ -32,3 +32,8 @@ variable "execution_role_arn" {
   description = "The ARN of the IAM role to use for the ECS task execution role"
   type        = string
 }
+
+variable "launch_type" {
+  description = "The launch type for the ECS service"
+  type        = string
+}
