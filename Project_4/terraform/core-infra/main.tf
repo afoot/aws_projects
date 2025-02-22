@@ -36,7 +36,7 @@ module "ecs_cluster" {
 
 resource "aws_service_discovery_private_dns_namespace" "this" {
   name        = "default.${local.name}.local"
-  description = "Service discovery <namespace>.<clustername>.local"
+  description = "Service discovery namespace for the ECS cluster"
   vpc         = module.vpc.vpc_id
 
   tags = local.tags
@@ -53,6 +53,13 @@ module "vpc" {
   azs             = local.azs
   public_subnets  = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k)]
   private_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 10)]
+  private_subnet_tags = {
+    "Name" = "Private"
+  }
+
+  public_subnet_tags = {
+    "Name" = "Public"
+  }
 
   enable_nat_gateway = true
   single_nat_gateway = true
