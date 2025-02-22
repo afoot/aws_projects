@@ -56,6 +56,6 @@ variable "network_mode" {
 variable "container_port" {
   description = "The port of the container to associate with the service"
   type        = number
-  default = 8080
+  default = 80
 }
 

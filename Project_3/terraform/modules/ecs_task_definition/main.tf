@@ -1,4 +1,4 @@
-resource "aws_ecs_task_definition" "this" {
+resource "aws_ecs_task_definition" "ecs_task_definition" {
   family                   = var.ecs_task_definition_family
   requires_compatibilities = ["FARGATE"]
   network_mode             = var.network_mode

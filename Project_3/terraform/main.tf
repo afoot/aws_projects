@@ -19,6 +19,29 @@ module "ecs_task_definition" {
 }
 
 module "ecs_service" {
-  source              = "./modules/ecs_service"
-  launch_type = var.launch_type
+  source                  = "./modules/ecs_service"
+  launch_type             = var.launch_type
+  subnet_ids              = module.vpc.public_subnets
+  security_group_id       = module.security.security_group_id
+  vpc_id                  = module.vpc.vpc_id
+  ecs_cluster_id          = module.ecs_cluster.ecs_cluster_id
+  ecs_task_definition_arn = module.ecs_task_definition.ecs_task_definition_arn
+  ecs_alb                 = module.ecs_alb.ecs_alb_arn
+  target_group_arn        = module.ecs_alb.target_group_arn
+}
+
+module "security" {
+  source = "./modules/security"
+  vpc_id = module.vpc.vpc_id
+}
+
+module "ecs_alb" {
+  source            = "./modules/ecs_alb"
+  vpc_id            = module.vpc.vpc_id
+  security_group_id = module.security.security_group_id
+  subnet_ids = [
+    module.vpc.public_subnets[0],
+    module.vpc.public_subnets[1],
+    module.vpc.public_subnets[2]
+  ]
 }

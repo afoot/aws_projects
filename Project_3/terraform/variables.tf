@@ -37,3 +37,9 @@ variable "launch_type" {
   description = "The launch type for the ECS service"
   type        = string
 }
+
+variable "target_group_arn" {
+  description = "The ARN of the ALB target group"
+  type        = string
+
+}
