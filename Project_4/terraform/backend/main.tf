@@ -87,10 +87,10 @@ resource "aws_service_discovery_service" "this" {
 
 # Supporting Resources
 
-data "aws_subnets" "public" {
+data "aws_subnets" "private" {
   filter {
     name   = "tag:Name"
-    values = ["Public"]
+    values = ["Private"]
   }
 }
 
