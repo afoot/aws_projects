@@ -35,12 +35,13 @@ module "vpc" {
   enable_nat_gateway = true
   single_nat_gateway = true
 
-   tags = local.tags
+  tags = local.tags
 }
 
 # Create a security group
 
 resource "aws_security_group" "web" {
+    name = "web"
   vpc_id = module.vpc.vpc_id
 
   ingress {
@@ -57,25 +58,26 @@ resource "aws_security_group" "web" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-    egress {
-        from_port   = 0
-        to_port     = 0
-        protocol    = "-1"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
 }
 
 # Create an EC2 instance
 
 resource "aws_instance" "web" {
-  ami           = "ami-0e1bed4f06a3b463d"
-  instance_type = "t2.micro"
-  key_name      = var.aws_key
-  security_groups = [aws_security_group.web.name]
+  ami                         = "ami-0e1bed4f06a3b463d"
+  instance_type               = "t2.micro"
+  key_name                    = var.aws_key
+  vpc_security_group_ids      = [aws_security_group.web.id]
   associate_public_ip_address = true
-  subnet_id = module.vpc.public_subnets[0]
-  user_data = <<-EOF
+  subnet_id                   = module.vpc.public_subnets[0]
+  depends_on                  = [ aws_security_group.web ]
+  user_data                   = <<-EOF
 		           #!/bin/bash
                    sudo apt-get update
 		           sudo apt-get install -y apache2
