@@ -25,5 +25,5 @@ output "public_subnets_cidr_blocks" {
 
 output "public_ec2_ips" {
   description = "A list of public IPs for the EC2 instances"
-  value       = aws_instance.web.*.public_ip
+  value       = [aws_instance.web.*.public_ip]
   }
