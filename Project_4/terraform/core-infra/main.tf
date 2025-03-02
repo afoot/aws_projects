@@ -29,7 +29,7 @@ module "ecs_cluster" {
     FARGATE_SPOT = {}
   }
 
-  tags = local.tags
+  tags = local.tags 
 }
 
 # Service Discovery
