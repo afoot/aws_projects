@@ -1,1 +1,7 @@
-# AWS projects for testing different services with terraform
+# AWS projects for testing different Amazone services with terraform
+- EC2
+- ECS
+- API Gateway
+- Lamda
+- ALB
+  
