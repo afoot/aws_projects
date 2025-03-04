@@ -8,3 +8,8 @@ variable "aws_key" {
   description = "The name of the SSH key to use"
   type        = string
 }
+
+variable "private_key_path" {
+  description = "Path to the private key file"
+  type        = string
+}
