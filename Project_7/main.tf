@@ -32,8 +32,8 @@ module "vpc" {
     "Name" = "public"
   }
 
-  enable_nat_gateway = true
-  single_nat_gateway = true
+  enable_nat_gateway   = true
+  single_nat_gateway   = true
   enable_dns_hostnames = true
 
   tags = local.tags
@@ -42,7 +42,7 @@ module "vpc" {
 # Create a security group
 
 resource "aws_security_group" "web" {
-  name = "web"
+  name   = "web"
   vpc_id = module.vpc.vpc_id
 
   ingress {
@@ -59,12 +59,13 @@ resource "aws_security_group" "web" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # EFS mount target, important to connect with NFS file system.
-  ingress = {
-    from_port   = 2049
-    to_port     = 2049
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]}
+  ingress {
+    from_port = 2049
+    to_port   = 2049
+    protocol  = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -83,7 +84,7 @@ resource "aws_instance" "web" {
   vpc_security_group_ids      = [aws_security_group.web.id]
   associate_public_ip_address = true
   subnet_id                   = module.vpc.public_subnets[0]
-  depends_on                  = [ aws_security_group.web ]
+  depends_on                  = [aws_security_group.web]
   user_data                   = <<-EOF
 		           #!/bin/bash
                sudo apt-get update
