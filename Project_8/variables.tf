@@ -5,6 +5,11 @@ variable "aws_region" {
 }
 
 variable "ecr_repo_name" {
+  description = "The ECR repository URL"
+  type        = string
+}
+
+variable "repo_name" {
   description = "The ECR repository name"
   type        = string
 }
