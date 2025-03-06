@@ -10,7 +10,6 @@ module "ecs" {
       logging = "OVERRIDE"
       log_configuration = {
         cloud_watch_log_group_name = "/aws/ecs/aws-ec2"
-      }
     }
   }
 
@@ -28,10 +27,11 @@ module "ecs" {
   }
 
   services = {
-    ecsdemo-frontend = {
+    flask-app = {
       cpu    = 256
       memory = 512
-
+      desired_count      = 2
+      
       # Container definition(s)
       container_definitions = {
 
@@ -49,7 +49,7 @@ module "ecs" {
             }
           ]
         }
-
+      }
 
         # Example image used requires access to write to root filesystem
         readonly_root_filesystem = false
@@ -66,10 +66,12 @@ module "ecs" {
         security_groups = [aws_security_group.web.id]
         }
       }
-    }
-
+        }
+    
+    
+    
     tags = {
       Environment = "Development"
       Project     = "Example"
     }
-  }
+}

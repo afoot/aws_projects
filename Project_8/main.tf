@@ -131,3 +131,10 @@ module "alb" {
 
   tags = local.tags
 }
+
+data "aws_subnets" "private" {
+  filter {
+    name   = "tag:Name"
+    values = ["private"]
+  }
+}
