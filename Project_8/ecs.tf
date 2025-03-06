@@ -36,8 +36,8 @@ module "ecs" {
       container_definitions = {
 
         flask-app = {
-          cpu       = 512
-          memory    = 1024
+          cpu       = 256
+          memory    = 512
           essential = true
           image     = var.ecr_repo_name
             port_mappings = [
@@ -56,7 +56,8 @@ module "ecs" {
 
       load_balancer = {
         service = {
-          target_group_arn = ""
+          target_group_arn = module.alb.target_groups["ex_ecs"].arn
+          container_name   = "flask-app"
           container_port   = 5000
         }
       }
