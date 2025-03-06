@@ -1,6 +1,6 @@
 # Getting data existed ECR
 module "ecs" {
-  source = "terraform-aws-modules/ecs/aws"
+  source  = "terraform-aws-modules/ecs/aws"
   version = "5.12.0"
 
   cluster_name = "ecs-cluster"
@@ -40,52 +40,36 @@ module "ecs" {
           memory    = 512
           essential = true
           image     = var.ecr_repo_name
-            port_mappings = [
-                {
-                name          = "flask-app"
-                containerPort = 5000
-                hostPort      = 5000
-                protocol      = "tcp"
-                }
-            ]
+          port_mappings = [
+            {
+              name          = "flask-app"
+              containerPort = 5000
+              hostPort      = 5000
+              protocol      = "tcp"
+            }
+          ]
         }
 
 
-          # Example image used requires access to write to root filesystem
-          readonly_root_filesystem = false
+        # Example image used requires access to write to root filesystem
+        readonly_root_filesystem = false
 
-      load_balancer = {
-        service = {
-          target_group_arn = module.alb.target_groups["ex_ecs"].arn
-          container_name   = "flask-app"
-          container_port   = 5000
+        load_balancer = {
+          service = {
+            target_group_arn = module.alb.target_groups["ex_ecs"].arn
+            container_name   = "flask-app"
+            container_port   = 5000
+          }
         }
-      }
 
-      subnet_ids = [module.vpc.public_subnets]
-      security_group_rules = {
-        alb_ingress_3000 = {
-          type                     = "ingress"
-          from_port                = 80
-          to_port                  = 5000
-          protocol                 = "tcp"
-          description              = "Service port"
-          source_security_group_id = aws_security_group.web.id
-        }
-        egress_all = {
-          type        = "egress"
-          from_port   = 0
-          to_port     = 0
-          protocol    = "-1"
-          cidr_blocks = ["0.0.0.0/0"]
+        subnet_ids = module.vpc.private_subnets
+        security_groups = [aws_security_group.web.id]
         }
       }
     }
-  }
 
-  tags = {
-    Environment = "Development"
-    Project     = "Example"
+    tags = {
+      Environment = "Development"
+      Project     = "Example"
+    }
   }
-}
-}
