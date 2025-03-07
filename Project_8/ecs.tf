@@ -11,6 +11,7 @@ module "ecs" {
       log_configuration = {
         cloud_watch_log_group_name = "/aws/ecs/aws-ec2"
     }
+   }
   }
 
   fargate_capacity_providers = {
@@ -25,17 +26,18 @@ module "ecs" {
       }
     }
   }
+  
 
   services = {
     flask-app = {
       cpu    = 256
       memory = 512
-      desired_count      = 2
+      desired_count = 2
       
       # Container definition(s)
       container_definitions = {
 
-        flask-app = {
+        flask-app-task = {
           cpu       = 256
           memory    = 512
           essential = true
@@ -48,11 +50,13 @@ module "ecs" {
               protocol      = "tcp"
             }
           ]
-        }
-      }
+        
+      
 
         # Example image used requires access to write to root filesystem
         readonly_root_filesystem = false
+        }
+      }
 
         load_balancer = {
           service = {
@@ -64,14 +68,13 @@ module "ecs" {
 
         subnet_ids = module.vpc.private_subnets
         security_groups = [aws_security_group.web.id]
-        }
-      }
-        }
-    
-    
+      
+    }
+  }    
+
+  
     
     tags = {
-      Environment = "Development"
-      Project     = "Example"
+      name = "flask-app"
     }
 }
