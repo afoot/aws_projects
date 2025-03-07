@@ -37,7 +37,7 @@ module "ecs" {
       # Container definition(s)
       container_definitions = {
 
-        flask-app-task = {
+        flask-app = {
           cpu       = 256
           memory    = 512
           essential = true
@@ -68,6 +68,7 @@ module "ecs" {
 
         subnet_ids = module.vpc.private_subnets
         security_groups = [aws_security_group.web.id]
+
       
     }
   }    
@@ -78,3 +79,4 @@ module "ecs" {
       name = "flask-app"
     }
 }
+
