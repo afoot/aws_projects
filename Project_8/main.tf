@@ -35,6 +35,7 @@ module "vpc" {
   enable_nat_gateway   = true
   single_nat_gateway   = true
   enable_dns_hostnames = true
+  enable_dns_support   = true
 
   tags = local.tags
 }
@@ -132,9 +133,3 @@ module "alb" {
   tags = local.tags
 }
 
-data "aws_subnets" "private" {
-  filter {
-    name   = "tag:Name"
-    values = ["private"]
-  }
-}
