@@ -1,75 +1,93 @@
+data "aws_eks_cluster_auth" "this" {
+  name = module.eks.cluster_name
+}
 
-# Create IAM Role for lambda
-resource "aws_iam_role" "lambda_role" {
-  name               = "aws_lambda_role"
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "lambda.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
+data "aws_availability_zones" "available" {}
+
+locals {
+  name   = basename(path.cwd)
+  cluster_version = "1.24"
+
+  vpc_cidr = "10.0.0.0/16"
+  azs      = slice(data.aws_availability_zones.available.names, 0, 3)
+
+  tags = {
+    name        = "eks-test"
+  }
+}
+
+# VPS and Subnets
+
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "~> 4.0"
+
+  name = local.name
+  cidr = local.vpc_cidr
+
+  azs             = local.azs
+  private_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k)]
+  public_subnets  = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 10)]
+
+  enable_nat_gateway = true
+  single_nat_gateway = true
+
+  public_subnet_tags = {
+    name = "public"
+  }
+
+  private_subnet_tags = {
+    name = "private"
+  }
+
+  tags = local.tags
+}
+
+# EKS Cluster
+
+module "eks" {
+  source  = "terraform-aws-modules/eks/aws"
+  version = "~> 19.12"
+
+  cluster_name                   = local.name
+  cluster_version                = local.cluster_version
+  cluster_endpoint_public_access = true
+
+  # EKS Addons
+  cluster_addons = {
+    coredns    = {}
+    kube-proxy = {}
+    vpc-cni    = {}
+  }
+
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
+
+  eks_managed_node_groups = {
+    initial = {
+      instance_types = ["m5.medium"]
+
+      min_size     = 1
+      max_size     = 3
+      desired_size = 2
     }
-  ]
-}
-EOF
+  }
+
+  tags = local.tags
 }
 
-# IAM policy for the lambda
-resource "aws_iam_policy" "iam_policy_for_lambda" {
+module "eks_blueprints_kubernetes_addons" {
+  source = "github.com/aws-ia/terraform-aws-eks-blueprints/modules/kubernetes-addons"
+  
+  eks_cluster_id       = module.eks.cluster_name
+  eks_cluster_endpoint = module.eks.cluster_endpoint
+  eks_oidc_provider    = module.eks.oidc_provider
+  eks_cluster_version  = module.eks.cluster_version
 
-  name        = "aws_iam_policy_for_aws_lambda_role"
-  path        = "/"
-  description = "AWS IAM Policy for managing aws lambda role"
-  policy      = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "logs:CreateLogGroup",
-        "logs:CreateLogStream",
-        "logs:PutLogEvents"
-      ],
-      "Resource": "arn:aws:logs:*:*:*",
-      "Effect": "Allow"
-    }
-  ]
-}
-EOF
-}
+  # Add-ons
+  enable_metrics_server     = true
+  enable_cluster_autoscaler = true
+  eks_worker_security_group_id = module.eks.cluster_security_group_id
 
-# Role - Policy Attachment
-resource "aws_iam_role_policy_attachment" "attach_iam_policy_to_iam_role" {
-  role       = aws_iam_role.lambda_role.name
-  policy_arn = aws_iam_policy.iam_policy_for_lambda.arn
-}
-
-# Getting data existed ECR
-data "aws_ecr_repository" "flask-app-serverless" {
-  name = "test/flask-app-serverless"
-}
-
-# Lambda Function, in terraform ${path.module} is the current directory.
-resource "aws_lambda_function" "lambda_function" {
-  function_name = "Lambda-Function"
-  role          = aws_iam_role.lambda_role.arn
-  # tag is required, "source image ... is not valid" error will pop up
-  image_uri    = "${data.aws_ecr_repository.flask-app-serverless.repository_url}:latest"
-  package_type = "Image"
-  depends_on   = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
-}
-
-# With Lambda permission, API Gateway can invoke Lambda 
-resource "aws_lambda_permission" "apigw" {
-  statement_id  = "AllowAPIGatewayInvoke"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.lambda_function.function_name
-  principal     = "apigateway.amazonaws.com"
-  # The "/*/*" portion grants access from any method on any resource within the API Gateway REST API.
-  source_arn = "${aws_api_gateway_rest_api.example.execution_arn}/*/*"
+  tags = local.tags
 }
